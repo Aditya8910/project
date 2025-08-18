@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Countdown Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #ffffff, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { text-shadow: 0 0 40px rgba(0, 212, 255, 0.8); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b3d9ff;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timer-creator {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .creator-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #00d4ff;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #b3d9ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            padding: 1.2rem;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-field::placeholder {
+            color: #7a9cc6;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 212, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            color: #ffffff;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .timers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .timer-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .timer-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .timer-card.expired {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); }
+            50% { box-shadow: 0 15px 35px rgba(255, 71, 87, 0.4); }
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .timer-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .timer-target {
+            font-size: 1rem;
+            color: #b3d9ff;
+            margin-bottom: 2rem;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .countdown-display {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-unit {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .time-unit:hover {
+            transform: scale(1.05);
+            border-color: #00d4ff;
+        }
+
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            display: block;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: #b3d9ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            border-radius: 4px;
+            transition: width 1s ease;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .expired-message {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ff4757;
+            margin: 2rem 0;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .celebration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #00d4ff;
+            animation: confetti-fall 4s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .sound-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(0, 212, 255, 0.2);
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(0, 212, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+            background: rgba(255, 71, 87, 0.2);
+            border-color: rgba(255, 71, 87, 0.5);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: #7a9cc6;
+        }
+
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            opacity: 0.6;
+        }
+
+        .empty-state-text {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .empty-state-subtext {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: #ffffff;
+            padding: 2.5rem 4rem;
+            border-radius: 20px;
+            border: 2px solid #00d4ff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            z-index: 2000;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            animation: notification-appear 0.5s ease;
+        }
+
+        @keyframes notification-appear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00d4ff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .main-title { font-size: 2.5rem; }
+            .input-grid { grid-template-columns: 1fr; }
+            .timers-grid { grid-template-columns: 1fr; }
+            .countdown-display { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .time-value { font-size: 2rem; }
+            .timer-creator { padding: 1.5rem; }
+            .sound-toggle { top: 1rem; right: 1rem; width: 60px; height: 60px; }
+        }
+
+        @media (max-width: 480px) {
+            .main-title { font-size: 2rem; }
+            .countdown-display { grid-template-columns: 1fr; }
+            .button-group { flex-direction: column; }
+            .btn { width: 100%; }
+            .notification { padding: 2rem; font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sound Toggle -->
+    <div class="sound-toggle" id="soundToggle" title="Toggle Sound">
+        <span id="soundIcon" style="font-size: 1.5rem;">🔊</span>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1 class="main-title">COUNTDOWN TIMER</h1>
+        <p class="subtitle">Create multiple timers and track your important moments</p>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Timer Creator Section -->
+        <section class="timer-creator">
+            <h2 class="creator-title">Create New Timer</h2>
+            <form id="timerForm">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="timerName">Timer Name</label>
+                        <input type="text" id="timerName" class="input-field" placeholder="Enter timer name" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="targetDate">Target Date</label>
+                        <input type="date" id="targetDate" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="targetTime">Target Time</label>
+                        <input type="time" id="targetTime" class="input-field" required>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <span id="createBtnText">Create Timer</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="clearAllBtn">Clear All</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Timers Display Section -->
+        <section class="timers-section">
+            <div class="timers-grid" id="timersGrid">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">⏰</div>
+                    <div class="empty-state-text">No timers created yet</div>
+                    <div class="empty-state-subtext">Create your first countdown timer above</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global state management
+        class TimerApp {
+            constructor() {
+                this.timers = [];
+                this.intervals = new Map();
+                this.soundEnabled = true;
+                this.nextId = 1;
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.initializeForm();
+                this.loadFromStorage();
+                console.log('Timer App initialized successfully');
+            }
+
+            setupEventListeners() {
+                // Form submission
+                document.getElementById('timerForm').addEventListener('submit', (e) => this.handleCreateTimer(e));
+                
+                // Clear all button
+                document.getElementById('clearAllBtn').addEventListener('click', () => this.clearAllTimers());
+                
+                // Sound toggle
+                document.getElementById('soundToggle').addEventListener('click', () => this.toggleSound());
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+            }
+
+            initializeForm() {
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('targetDate').min = today;
+                document.getElementById('targetDate').value = today;
+                
+                // Set default time to current time + 1 hour
+                const now = new Date();
+                now.setHours(now.getHours() + 1);
+                document.getElementById('targetTime').value = now.toTimeString().slice(0, 5);
+            }
+
+            handleCreateTimer(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('timerName').value.trim();
+                const date = document.getElementById('targetDate').value;
+                const time = document.getElementById('targetTime').value;
+                
+                if (!name || !date || !time) {
+                    this.showNotification('Please fill in all fields!', 'error');
+                    return;
+                }
+                
+                const targetDateTime = new Date(`${date}T${time}`);
+                const now = new Date();
+                
+                if (targetDateTime <= now) {
+                    this.showNotification('Target time must be in the future!', 'error');
+                    return;
+                }
+                
+                this.createTimer(name, targetDateTime);
+            }
+
+            createTimer(name, targetDateTime) {
+                const createBtn = document.getElementById('createBtnText');
+                const originalText = createBtn.textContent;
+                createBtn.innerHTML = '<span class="loading"></span> Creating...';
+                
+                setTimeout(() => {
+                    const timer = {
+                        id: this.nextId++,
+                        name: name,
+                        targetDateTime: targetDateTime,
+                        createdAt: new Date(),
+                        isActive: true,
+                        isPaused: false
+                    };
+                    
+                    this.timers.push(timer);
+                    this.renderTimer(timer);
+                    this.startTimer(timer.id);
+                    this.saveToStorage();
+                    this.updateEmptyState();
+                    
+                    // Reset form
+                    document.getElementById('timerForm').reset();
+                    this.initializeForm();
+                    
+                    createBtn.textContent = originalText;
+                    this.showNotification('Timer created successfully! 🎉', 'success');
+                }, 800);
+            }
+
+            renderTimer(timer) {
+                const timersGrid = document.getElementById('timersGrid');
+                
+                const timerCard = document.createElement('div');
+                timerCard.className = 'timer-card';
+                timerCard.id = `timer-${timer.id}`;
+                
+                timerCard.innerHTML = `
+                    <div class="timer-header">
+                        <h3 class="timer-title">${this.escapeHtml(timer.name)}</h3>
+                        <button class="btn btn-danger control-btn" onclick="app.deleteTimer(${timer.id})">✕</button>
+                    </div>
+                    <div class="timer-target">
+                        🎯 Target: ${this.formatDateTime(timer.targetDateTime)}
+                    </div>
+                    <div class="countdown-display" id="countdown-${timer.id}">
+                        <div class="time-unit">
+                            <span class="time-value" id="days-${timer.id}">00</span>
+                            <span class="time-label">Days</span>
+                        </div>
+                        <div class="time-unit">
+                            <span class="time-value" id="hours-${timer.id}">00</span>
+                            <span class="time-label">Hours</span>
+                        </div>
+                        <div class="time-unit">
+                            <span class="time-value" id="minutes-${timer.id}">00</span>
+                            <span class="time-label">Minutes</span>
+                        </div>
+                        <div class="time-unit">
+                            <span class="time-value" id="seconds-${timer.id}">00</span>
+                            <span class="time-label">Seconds</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-${timer.id}"></div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn btn-secondary control-btn" onclick="app.toggleTimer(${timer.id})">
+                            <span id="toggle-btn-${timer.id}">⏸️ Pause</span>
+                        </button>
+                        <button class="btn btn-secondary control-btn" onclick="app.resetTimer(${timer.id})">🔄 Reset</button>
+                    </div>
+                    <div class="celebration" id="celebration-${timer.id}"></div>
+                `;
+                
+                timersGrid.appendChild(timerCard);
+            }
+
+            startTimer(timerId) {
+                // Clear existing interval
+                if (this.intervals.has(timerId)) {
+                    clearInterval(this.intervals.get(timerId));
+                }
+                
+                const timer = this.timers.find(t => t.id === timerId);
+                if (!timer || !timer.isActive) return;
+                
+                const interval = setInterval(() => {
+                    this.updateTimerDisplay(timerId);
+                }, 1000);
+                
+                this.intervals.set(timerId, interval);
+                this.updateTimerDisplay(timerId);
+            }
+
+            updateTimerDisplay(timerId) {
+                const timer = this.timers.find(t => t.id === timerId);
+                if (!timer) return;
+                
+                const now = new Date().getTime();
+                const target = timer.targetDateTime.getTime();
+                const difference = target - now;
+                
+                if (difference <= 0) {
+                    this.handleTimerExpired(timerId);
+                    return;
+                }
+                
+                // Calculate time units
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                
+                // Update display elements
+                const elements = {
+                    days: document.getElementById(`days-${timerId}`),
+                    hours: document.getElementById(`hours-${timerId}`),
+                    minutes: document.getElementById(`minutes-${timerId}`),
+                    seconds: document.getElementById(`seconds-${timerId}`)
+                };
+                
+                if (elements.days) elements.days.textContent = String(days).padStart(2, '0');
+                if (elements.hours) elements.hours.textContent = String(hours).padStart(2, '0');
+                if (elements.minutes) elements.minutes.textContent = String(minutes).padStart(2, '0');
+                if (elements.seconds) elements.seconds.textContent = String(seconds).padStart(2, '0');
+                
+                // Update progress bar
+                const totalDuration = timer.targetDateTime.getTime() - timer.createdAt.getTime();
+                const elapsed = now - timer.createdAt.getTime();
+                const progress = Math.min((elapsed / totalDuration) * 100, 100);
+                
+                const progressBar = document.getElementById(`progress-${timerId}`);
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                }
+            }
+
+            handleTimerExpired(timerId) {
+                const timer = this.timers.find(t => t.id === timerId);
+                if (!timer) return;
+                
+                // Clear interval
+                if (this.intervals.has(timerId)) {
+                    clearInterval(this.intervals.get(timerId));
+                    this.intervals.delete(timerId);
+                }
+                
+                // Update timer state
+                timer.isActive = false;
+                
+                // Update UI
+                const timerCard = document.getElementById(`timer-${timerId}`);
+                if (timerCard) {
+                    timerCard.classList.add('expired');
+                    
+                    // Replace countdown with expired message
+                    const countdownDisplay = document.getElementById(`countdown-${timerId}`);
+                    if (countdownDisplay) {
+                        countdownDisplay.innerHTML = '<div class="expired-message">🎉 TIME\'S UP! 🎉</div>';
+                    }
+                    
+                    // Update controls
+                    const toggleBtn = document.getElementById(`toggle-btn-${timerId}`);
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '⏹️ Expired';
+                        toggleBtn.parentElement.disabled = true;
+                    }
+                    
+                    // Set progress to 100%
+                    const progressBar = document.getElementById(`progress-${timerId}`);
+                    if (progressBar) {
+                        progressBar.style.width = '100%';
+                    }
+                    
+                    // Add celebration
+                    this.createCelebration(timerId);
+                }
+                
+                // Notifications
+                if (this.soundEnabled) {
+                    this.playNotificationSound();
+                }
+                this.showNotification(`"${timer.name}" timer has expired! 🎉`, 'success');
+                
+                this.saveToStorage();
+            }
+
+            toggleTimer(timerId) {
+                const timer = this.timers.find(t => t.id === timerId);
+                if (!timer || !timer.isActive) return;
+                
+                const toggleBtn = document.getElementById(`toggle-btn-${timerId}`);
+                if (!toggleBtn) return;
+                
+                if (timer.isPaused) {
+                    // Resume timer
+                    timer.isPaused = false;
+                    this.startTimer(timerId);
+                    toggleBtn.textContent = '⏸️ Pause';
+                    this.showNotification('Timer resumed ▶️', 'info');
+                } else {
+                    // Pause timer
+                    timer.isPaused = true;
+                    if (this.intervals.has(timerId)) {
+                        clearInterval(this.intervals.get(timerId));
+                        this.intervals.delete(timerId);
+                    }
+                    toggleBtn.textContent = '▶️ Resume';
+                    this.showNotification('Timer paused ⏸️', 'info');
+                }
+                
+                this.saveToStorage();
+            }
+
+            resetTimer(timerId) {
+                if (!confirm('Are you sure you want to reset this timer? This will restart the countdown from the beginning.')) {
+                    return;
+                }
+                
+                const timer = this.timers.find(t => t.id === timerId);
+                if (!timer) return;
+                
+                try {
+                    // Clear interval
+                    if (this.intervals.has(timerId)) {
+                        clearInterval(this.intervals.get(timerId));
+                        this.intervals.delete(timerId);
+                    }
+                    
+                    // Reset timer properties
+                    timer.createdAt = new Date();
+                    timer.isActive = true;
+                    timer.isPaused = false;
+                    
+                    // Reset UI
+                    const timerCard = document.getElementById(`timer-${timerId}`);
+                    if (timerCard) {
+                        timerCard.classList.remove('expired');
+                        
+                        // Restore countdown display
+                        const countdownDisplay = document.getElementById(`countdown-${timerId}`);
+                        if (countdownDisplay) {
+                            countdownDisplay.innerHTML = `
+                                <div class="time-unit">
+                                    <span class="time-value" id="days-${timerId}">00</span>
+                                    <span class="time-label">Days</span>
+                                </div>
+                                <div class="time-unit">
+                                    <span class="time-value" id="hours-${timerId}">00</span>
+                                    <span class="time-label">Hours</span>
+                                </div>
+                                <div class="time-unit">
+                                    <span class="time-value" id="minutes-${timerId}">00</span>
+                                    <span class="time-label">Minutes</span>
+                                </div>
+                                <div class="time-unit">
+                                    <span class="time-value" id="seconds-${timerId}">00</span>
+                                    <span class="time-label">Seconds</span>
+                                </div>
+                            `;
+                        }
+                        
+                        // Reset controls
+                        const toggleBtn = document.getElementById(`toggle-btn-${timerId}`);
+                        if (toggleBtn) {
+                            toggleBtn.textContent = '⏸️ Pause';
+                            toggleBtn.parentElement.disabled = false;
+                        }
+                        
+                        // Reset progress bar
+                        const progressBar = document.getElementById(`progress-${timerId}`);
+                        if (progressBar) {
+                            progressBar.style.width = '0%';
+                        }
+                        
+                        // Clear celebration
+                        const celebration = document.getElementById(`celebration-${timerId}`);
+                        if (celebration) {
+                            celebration.innerHTML = '';
+                        }
+                    }
+                    
+                    // Restart timer
+                    this.startTimer(timerId);
+                    this.saveToStorage();
+                    this.showNotification('Timer reset successfully! 🔄', 'success');
+                    
+                } catch (error) {
+                    console.error('Error resetting timer:', error);
+                    this.showNotification('Error resetting timer', 'error');
+                }
+            }
+
+            deleteTimer(timerId) {
+                if (!confirm('Are you sure you want to delete this timer?')) {
+                    return;
+                }
+                
+                try {
+                    // Clear interval
+                    if (this.intervals.has(timerId)) {
+                        clearInterval(this.intervals.get(timerId));
+                        this.intervals.delete(timerId);
+                    }
+                    
+                    // Remove from array
+                    this.timers = this.timers.filter(t => t.id !== timerId);
+                    
+                    // Remove from DOM with animation
+                    const timerCard = document.getElementById(`timer-${timerId}`);
+                    if (timerCard) {
+                        timerCard.style.transition = 'all 0.5s ease';
+                        timerCard.style.transform = 'scale(0.8) rotateY(90deg)';
+                        timerCard.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            if (timerCard.parentNode) {
+                                timerCard.parentNode.removeChild(timerCard);
+                            }
+                            this.updateEmptyState();
+                        }, 500);
+                    } else {
+                        this.updateEmptyState();
+                    }
+                    
+                    this.saveToStorage();
+                    this.showNotification('Timer deleted successfully! 🗑️', 'info');
+                    
+                } catch (error) {
+                    console.error('Error deleting timer:', error);
+                    this.showNotification('Error deleting timer', 'error');
+                    this.updateEmptyState();
+                }
+            }
+
+            clearAllTimers() {
+                if (this.timers.length === 0) {
+                    this.showNotification('No timers to clear', 'info');
+                    return;
+                }
+                
+                if (!confirm(`Are you sure you want to delete all ${this.timers.length} timers?`)) {
+                    return;
+                }
+                
+                try {
+                    // Clear all intervals
+                    this.intervals.forEach((interval, timerId) => {
+                        clearInterval(interval);
+                    });
+                    this.intervals.clear();
+                    
+                    // Clear timers array
+                    this.timers = [];
+                    
+                    // Animate removal of all cards
+                    const timerCards = document.querySelectorAll('.timer-card');
+                    timerCards.forEach((card, index) => {
+                        setTimeout(() => {
+                            if (card) {
+                                card.style.transition = 'all 0.5s ease';
+                                card.style.transform = 'scale(0.8) rotateX(90deg)';
+                                card.style.opacity = '0';
+                            }
+                        }, index * 150);
+                    });
+                    
+                    // Clear DOM after animations
+                    setTimeout(() => {
+                        const timersGrid = document.getElementById('timersGrid');
+                        if (timersGrid) {
+                            timersGrid.innerHTML = '';
+                        }
+                        this.updateEmptyState();
+                    }, timerCards.length * 150 + 500);
+                    
+                    this.saveToStorage();
+                    this.showNotification('All timers cleared successfully! 🧹', 'info');
+                    
+                } catch (error) {
+                    console.error('Error clearing all timers:', error);
+                    this.showNotification('Error clearing timers', 'error');
+                    
+                    // Fallback cleanup
+                    this.intervals.clear();
+                    this.timers = [];
+                    const timersGrid = document.getElementById('timersGrid');
+                    if (timersGrid) timersGrid.innerHTML = '';
+                    this.updateEmptyState();
+                    this.saveToStorage();
+                }
+            }
+
+            createCelebration(timerId) {
+                const celebration = document.getElementById(`celebration-${timerId}`);
+                if (!celebration) return;
+                
+                const colors = ['#00d4ff', '#ff4757', '#2ed573', '#ffa502', '#ff6b6b'];
+                
+                for (let i = 0; i < 30; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    celebration.appendChild(confetti);
+                }
+                
+                setTimeout(() => {
+                    celebration.innerHTML = '';
+                }, 6000);
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                const soundIcon = document.getElementById('soundIcon');
+                const soundToggle = document.getElementById('soundToggle');
+                
+                if (this.soundEnabled) {
+                    soundIcon.textContent = '🔊';
+                    soundToggle.classList.remove('muted');
+                    soundToggle.title = 'Mute Sound';
+                } else {
+                    soundIcon.textContent = '🔇';
+                    soundToggle.classList.add('muted');
+                    soundToggle.title = 'Enable Sound';
+                }
+                
+                this.saveToStorage();
+                this.showNotification(`Sound ${this.soundEnabled ? 'enabled 🔊' : 'disabled 🔇'}`, 'info');
+            }
+
+            playNotificationSound() {
+                if (!this.soundEnabled) return;
+                
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 1);
+                } catch (error) {
+                    console.log('Audio not supported:', error);
+                }
+            }
+
+            updateEmptyState() {
+                const timersGrid = document.getElementById('timersGrid');
+                const emptyState = document.getElementById('emptyState');
+                const hasTimers = this.timers.length > 0;
+                
+                if (hasTimers && emptyState) {
+                    emptyState.remove();
+                } else if (!hasTimers && !emptyState) {
+                    timersGrid.innerHTML = `
+                        <div class="empty-state" id="emptyState">
+                            <div class="empty-state-icon">⏰</div>
+                            <div class="empty-state-text">No timers created yet</div>
+                            <div class="empty-state-subtext">Create your first countdown timer above</div>
+                        </div>
+                    `;
+                }
+            }
+
+            handleKeyboard(event) {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+                    event.preventDefault();
+                    document.getElementById('timerName').focus();
+                }
+                
+                if (event.key === 'Escape') {
+                    document.getElementById('timerForm').reset();
+                    this.initializeForm();
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                
+                if (type === 'error') {
+                    notification.style.borderColor = '#ff4757';
+                    notification.style.background = 'rgba(255, 71, 87, 0.1)';
+                } else if (type === 'success') {
+                    notification.style.borderColor = '#2ed573';
+                    notification.style.background = 'rgba(46, 213, 115, 0.1)';
+                }
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'notification-appear 0.3s ease reverse';
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            saveToStorage() {
+                try {
+                    const data = {
+                        timers: this.timers.map(timer => ({
+                            ...timer,
+                            targetDateTime: timer.targetDateTime.toISOString(),
+                            createdAt: timer.createdAt.toISOString()
+                        })),
+                        nextId: this.nextId,
+                        soundEnabled: this.soundEnabled
+                    };
+                    localStorage.setItem('countdownTimerApp', JSON.stringify(data));
+                } catch (error) {
+                    console.error('Failed to save to storage:', error);
+                }
+            }
+
+            loadFromStorage() {
+                try {
+                    const saved = localStorage.getItem('countdownTimerApp');
+                    if (!saved) return;
+                    
+                    const data = JSON.parse(saved);
+                    
+                    // Load timers
+                    if (data.timers) {
+                        data.timers.forEach(timerData => {
+                            const timer = {
+                                ...timerData,
+                                targetDateTime: new Date(timerData.targetDateTime),
+                                createdAt: new Date(timerData.createdAt)
+                            };
+                            
+                            // Only load future timers
+                            if (timer.targetDateTime > new Date()) {
+                                this.timers.push(timer);
+                                this.renderTimer(timer);
+                                if (timer.isActive && !timer.isPaused) {
+                                    this.startTimer(timer.id);
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Load settings
+                    if (typeof data.nextId === 'number') {
+                        this.nextId = data.nextId;
+                    }
+                    
+                    if (typeof data.soundEnabled === 'boolean') {
+                        this.soundEnabled = data.soundEnabled;
+                        if (!this.soundEnabled) {
+                            document.getElementById('soundIcon').textContent = '🔇';
+                            document.getElementById('soundToggle').classList.add('muted');
+                        }
+                    }
+                    
+                    this.updateEmptyState();
+                } catch (error) {
+                    console.error('Failed to load from storage:', error);
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            formatDateTime(date) {
+                return date.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+        }
+
+        // Initialize the app
+        const app = new TimerApp();
+        
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            console.log(`Timer App loaded in ${Math.round(performance.now())}ms`);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96be25fa646e4025',t:'MTc1NDY0NzAzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
